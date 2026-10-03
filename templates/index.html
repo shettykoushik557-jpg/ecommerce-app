@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovaStore - Modern E-Commerce Platform</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg sticky-top shadow-sm border-bottom bg-body-tertiary">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center me-4" href="#" onclick="showSection('catalog-section'); return false;">
+                <span class="bg-primary text-white p-2 rounded-3 me-2 d-inline-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                    <i class="bi bi-shop fs-5"></i>
+                </span>
+                <span class="fs-4 text-gradient">NovaStore</span>
+            </a>
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <!-- Search Bar -->
+                <form class="d-flex my-2 my-lg-0 flex-grow-1 max-w-500 mx-lg-3" onsubmit="handleSearch(event)">
+                    <div class="input-group search-input-group">
+                        <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="search" id="searchInput" class="form-control border-start-0 ps-0" placeholder="Search products, brands, categories..." aria-label="Search">
+                        <button class="btn btn-outline-primary px-3" type="submit">Search</button>
+                    </div>
+                </form>
+
+                <!-- Navigation Links -->
+                <ul class="navbar-nav ms-auto align-items-center gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold px-3 active" id="navHome" href="#" onclick="showSection('catalog-section'); return false;">
+                            <i class="bi bi-grid-fill me-1"></i> Storefront
+                        </a>
+                    </li>
+                    <li class="nav-item d-none" id="navAdmin">
+                        <a class="nav-link fw-semibold px-3 text-primary" href="#" onclick="showSection('admin-section'); return false;">
+                            <i class="bi bi-speedometer2 me-1"></i> Admin Console
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold px-3" href="#" onclick="showSection('track-section'); return false;">
+                            <i class="bi bi-geo-alt-fill me-1"></i> Track Order
+                        </a>
+                    </li>
+
+                    <!-- Dark Mode Toggle -->
+                    <li class="nav-item">
+                        <button class="btn btn-icon btn-outline-secondary border-0 rounded-circle" id="themeToggleBtn" title="Toggle Dark Mode">
+                            <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+                        </button>
+                    </li>
+
+                    <!-- Cart Drawer Trigger -->
+                    <li class="nav-item me-1">
+                        <button class="btn btn-primary position-relative rounded-pill px-3 py-2 d-flex align-items-center" onclick="openCartDrawer()">
+                            <i class="bi bi-bag-check-fill me-2 fs-6"></i>
+                            <span class="fw-bold d-none d-sm-inline me-1">Cart</span>
+                            <span class="badge rounded-pill bg-white text-primary ms-1" id="cartBadge">0</span>
+                        </button>
+                    </li>
+
+                    <!-- User Account / Auth Buttons -->
+                    <li class="nav-item ms-lg-2" id="authContainer">
+                        <!-- Filled dynamically by JS -->
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <main class="container my-4">
+
+        <!-- TOAST CONTAINER -->
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">
+            <div id="appToast" class="toast align-items-center border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body fs-6 fw-semibold d-flex align-items-center gap-2" id="toastMessage">
+                        <i class="bi bi-check-circle-fill text-success"></i> Notification
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1. PRODUCT CATALOG SECTION -->
+        <section id="catalog-section">
+
+            <!-- Hero Banner -->
+            <div class="hero-banner p-4 p-md-5 mb-4 rounded-4 shadow-sm text-white position-relative overflow-hidden">
+                <div class="row align-items-center position-relative z-1">
+                    <div class="col-lg-7">
+                        <span class="badge bg-white text-dark mb-2 px-3 py-2 rounded-pill fw-bold text-uppercase tracking-wide">
+                            <i class="bi bi-stars text-warning me-1"></i> Premium Collection 2026
+                        </span>
+                        <h1 class="display-5 fw-extrabold mb-3">Discover Next-Gen Products with Express Delivery</h1>
+                        <p class="lead text-white-80 mb-4">Explore top-rated gadgets, modern lifestyle fashion, and home essentials with verified 100% genuine products.</p>
+                        <div class="d-flex flex-wrap gap-3">
+                            <a href="#products-grid" class="btn btn-light btn-lg fw-bold rounded-pill px-4 text-primary shadow">
+                                Shop Now <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                            <button class="btn btn-outline-light btn-lg fw-semibold rounded-pill px-4" onclick="showDemoCredentials()">
+                                <i class="bi bi-key-fill me-1"></i> Demo Logins
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Background Glow Decorative Shape -->
+                <div class="hero-glow position-absolute"></div>
+            </div>
+
+            <!-- Categories Horizontal Filter Bar -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold m-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-collection-fill text-primary"></i> Browse Categories
+                </h4>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary rounded-pill btn-sm dropdown-toggle fw-semibold px-3" type="button" id="sortDropdown" data-bs-toggle="dropdown">
+                        <i class="bi bi-sort-down me-1"></i> Sort By: <span id="currentSortText">Newest</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                        <li><a class="dropdown-item" href="#" onclick="applySort('newest', 'Newest')">Newest Arrivals</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="applySort('price_asc', 'Price: Low to High')">Price: Low to High</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="applySort('price_desc', 'Price: High to Low')">Price: High to Low</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="applySort('rating', 'Customer Rating')">Customer Rating</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mb-4" id="categoryChips">
+                <button class="btn btn-category active rounded-pill px-3 py-2" onclick="filterByCategory(null, this)">
+                    <i class="bi bi-grid-3x3-gap-fill me-1"></i> All Products
+                </button>
+                <!-- Dynamically filled -->
+            </div>
+
+            <!-- Active Search Filter Alert -->
+            <div id="searchFilterAlert" class="alert alert-info d-none d-flex justify-content-between align-items-center rounded-3 mb-4 shadow-sm">
+                <div>
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    <span>Showing search results for: <strong id="activeSearchQuery"></strong></span>
+                </div>
+                <button class="btn btn-sm btn-outline-info rounded-pill" onclick="clearSearchFilter()">Clear Filter</button>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-4" id="products-grid">
+                <!-- Dynamically rendered -->
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading products...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. USER ORDERS SECTION -->
+        <section id="user-orders-section" class="d-none">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h3 class="fw-bold m-0"><i class="bi bi-bag-check text-primary me-2"></i> My Purchase History</h3>
+                    <p class="text-muted m-0">Review all your previous orders, status, and tracking information.</p>
+                </div>
+                <button class="btn btn-outline-primary rounded-pill" onclick="showSection('catalog-section')">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Store
+                </button>
+            </div>
+
+            <div id="userOrdersList" class="d-flex flex-column gap-3">
+                <!-- Dynamically filled -->
+            </div>
+        </section>
+
+        <!-- 3. ORDER TRACKING SECTION -->
+        <section id="track-section" class="d-none">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+                        <div class="card-body p-4 p-md-5">
+                            <div class="text-center mb-4">
+                                <div class="icon-circle bg-primary-subtle text-primary mx-auto mb-3">
+                                    <i class="bi bi-pin-map-fill fs-2"></i>
+                                </div>
+                                <h3 class="fw-bold">Track Your Package</h3>
+                                <p class="text-muted">Enter your unique Order Tracking Number (e.g. <code>TRK-98421054</code>) to check live status.</p>
+                            </div>
+
+                            <form onsubmit="handleTrackSearch(event)" class="row g-2 justify-content-center">
+                                <div class="col-md-8">
+                                    <input type="text" id="trackInput" class="form-control form-control-lg rounded-pill px-4" placeholder="Enter Tracking Number..." required>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold">
+                                        <i class="bi bi-search me-1"></i> Track Order
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Tracking Result Card -->
+                    <div id="trackingResult" class="d-none">
+                        <!-- Dynamically filled -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. ADMIN CONSOLE SECTION -->
+        <section id="admin-section" class="d-none">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h3 class="fw-bold m-0"><i class="bi bi-speedometer2 text-primary me-2"></i> Store Administration Console</h3>
+                    <p class="text-muted m-0">Manage products, update order statuses, and view live store analytics.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary rounded-pill fw-bold" onclick="openAddProductModal()">
+                        <i class="bi bi-plus-circle-fill me-1"></i> Add New Product
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Stats Cards -->
+            <div class="row g-3 mb-4" id="adminStatsGrid">
+                <div class="col-6 col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4 p-3 bg-body-tertiary">
+                        <div class="text-muted small fw-semibold">Total Revenue</div>
+                        <div class="fs-3 fw-bold text-success" id="statRevenue">$0.00</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4 p-3 bg-body-tertiary">
+                        <div class="text-muted small fw-semibold">Total Orders</div>
+                        <div class="fs-3 fw-bold text-primary" id="statOrders">0</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4 p-3 bg-body-tertiary">
+                        <div class="text-muted small fw-semibold">Total Products</div>
+                        <div class="fs-3 fw-bold text-info" id="statProducts">0</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4 p-3 bg-body-tertiary">
+                        <div class="text-muted small fw-semibold">Total Customers</div>
+                        <div class="fs-3 fw-bold text-warning" id="statCustomers">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Tabs -->
+            <ul class="nav nav-pills mb-4 gap-2" id="adminTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active rounded-pill fw-semibold" id="admin-orders-tab" data-bs-toggle="tab" data-bs-target="#admin-orders-pane" type="button" role="tab">
+                        <i class="bi bi-receipt me-1"></i> Manage Orders
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link rounded-pill fw-semibold" id="admin-products-tab" data-bs-toggle="tab" data-bs-target="#admin-products-pane" type="button" role="tab">
+                        <i class="bi bi-box-seam me-1"></i> Manage Inventory
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="adminTabContent">
+                <!-- Orders Table Tab -->
+                <div class="tab-pane fade show active" id="admin-orders-pane" role="tabpanel">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" id="adminOrdersTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Total</th>
+                                        <th>Payment</th>
+                                        <th>Current Status</th>
+                                        <th>Update Status</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Filled by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Table Tab -->
+                <div class="tab-pane fade" id="admin-products-pane" role="tabpanel">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" id="adminProductsTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Product Name</th>
+                                        <th>Category</th>
+                                        <th>Price</th>
+                                        <th>Stock</th>
+                                        <th>Rating</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Filled by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SHOPPING CART SIDEBAR DRAWER -->
+    <div class="offcanvas offcanvas-end rounded-start-4 border-0 shadow-lg" tabindex="-1" id="cartDrawer" aria-labelledby="cartDrawerLabel" style="width: 420px; max-width: 100vw;">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title fw-bold d-flex align-items-center gap-2" id="cartDrawerLabel">
+                <i class="bi bi-bag-check-fill text-primary"></i> Shopping Cart
+                <span class="badge bg-primary-subtle text-primary rounded-pill px-2" id="cartDrawerCount">0</span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body d-flex flex-column p-0">
+            <!-- Cart Items Container -->
+            <div id="cartItemsList" class="flex-grow-1 overflow-y-auto p-3 d-flex flex-column gap-3">
+                <!-- Dynamically filled -->
+            </div>
+
+            <!-- Cart Footer Summary -->
+            <div class="p-3 border-top bg-body-tertiary shadow-sm" id="cartSummaryContainer">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Subtotal</span>
+                    <span class="fw-bold" id="cartSubtotal">$0.00</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Estimated Shipping</span>
+                    <span class="text-success fw-bold">FREE</span>
+                </div>
+                <hr class="my-2">
+                <div class="d-flex justify-content-between mb-3 fs-5">
+                    <span class="fw-bold">Total Amount</span>
+                    <span class="fw-bold text-primary" id="cartTotal">$0.00</span>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary btn-lg rounded-pill fw-bold" id="btnProceedCheckout" onclick="openCheckoutModal()">
+                        Proceed to Checkout <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
+                    <button class="btn btn-link text-muted btn-sm text-decoration-none" onclick="clearCart()">Clear Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRODUCT DETAIL MODAL -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-body p-0" id="productModalBody">
+                    <!-- Dynamically rendered -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header border-bottom bg-body-tertiary">
+                    <h5 class="modal-header-title fw-bold m-0"><i class="bi bi-shield-check text-primary me-2"></i> Secure Checkout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="checkoutForm" onsubmit="handleCheckoutSubmit(event)">
+                        <div class="row g-4">
+                            <!-- Left: Address & Payment Form -->
+                            <div class="col-md-7 border-end-md">
+                                <h6 class="fw-bold mb-3"><span class="badge bg-primary me-2">1</span> Shipping Details</h6>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted fw-bold">Full Name</label>
+                                    <input type="text" id="chkName" class="form-control" placeholder="John Doe" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted fw-bold">Street Address</label>
+                                    <input type="text" id="chkAddress" class="form-control" placeholder="123 Main Street, Apt 4B" required>
+                                </div>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label small text-muted fw-bold">City</label>
+                                        <input type="text" id="chkCity" class="form-control" placeholder="San Francisco" required>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small text-muted fw-bold">Zip / Postal Code</label>
+                                        <input type="text" id="chkZip" class="form-control" placeholder="94107" required>
+                                    </div>
+                                </div>
+
+                                <h6 class="fw-bold mb-3 mt-4"><span class="badge bg-primary me-2">2</span> Payment Method</h6>
+                                <div class="d-flex flex-column gap-2 mb-3">
+                                    <div class="form-check custom-radio-card p-3 border rounded-3">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="payCard" value="Credit/Debit Card" checked>
+                                        <label class="form-check-label fw-bold d-flex align-items-center justify-content-between w-100" for="payCard">
+                                            <span><i class="bi bi-credit-card-2-front text-primary me-2"></i> Credit / Debit Card</span>
+                                            <span class="small text-muted"><i class="bi bi-lock-fill"></i> SSL Secure</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-check custom-radio-card p-3 border rounded-3">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="payUPI" value="UPI / Net Banking">
+                                        <label class="form-check-label fw-bold d-flex align-items-center justify-content-between w-100" for="payUPI">
+                                            <span><i class="bi bi-qr-code-scan text-primary me-2"></i> UPI / Net Banking</span>
+                                            <span class="badge bg-success-subtle text-success">Instant</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-check custom-radio-card p-3 border rounded-3">
+                                        <input class="form-check-input" type="radio" name="paymentMethod" id="payCOD" value="Cash on Delivery">
+                                        <label class="form-check-label fw-bold d-flex align-items-center justify-content-between w-100" for="payCOD">
+                                            <span><i class="bi bi-cash-stack text-primary me-2"></i> Cash on Delivery</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Order Items Summary -->
+                            <div class="col-md-5 bg-body-tertiary p-4 rounded-4">
+                                <h6 class="fw-bold mb-3">Order Summary</h6>
+                                <div id="checkoutSummaryItems" class="d-flex flex-column gap-2 mb-3 overflow-y-auto" style="max-height: 220px;">
+                                    <!-- Items listed -->
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between mb-2 small text-muted">
+                                    <span>Subtotal</span>
+                                    <span id="chkSubtotal">$0.00</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2 small text-muted">
+                                    <span>Shipping</span>
+                                    <span class="text-success fw-bold">FREE</span>
+                                </div>
+                                <div class="d-flex justify-content-between fs-5 fw-bold text-primary mb-4">
+                                    <span>Total Pay</span>
+                                    <span id="chkTotalPay">$0.00</span>
+                                </div>
+
+                                <button type="submit" id="btnConfirmOrder" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold shadow">
+                                    Complete Order <i class="bi bi-check-circle-fill ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION (LOGIN / REGISTER) MODAL -->
+    <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <span class="bg-primary text-white p-2 rounded-3 d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px;">
+                            <i class="bi bi-person-circle fs-4"></i>
+                        </span>
+                        <h4 class="fw-bold" id="authModalTitle">Welcome Back</h4>
+                        <p class="text-muted small" id="authModalSubtitle">Sign in to your account to continue</p>
+                    </div>
+
+                    <!-- Auth Tabs -->
+                    <ul class="nav nav-pills nav-justified mb-4 p-1 bg-body-tertiary rounded-pill" id="authPills" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active rounded-pill fw-bold" id="login-tab" data-bs-toggle="pill" data-bs-target="#login-pane" type="button" onclick="toggleAuthMode('login')">Login</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link rounded-pill fw-bold" id="register-tab" data-bs-toggle="pill" data-bs-target="#register-pane" type="button" onclick="toggleAuthMode('register')">Register</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="authTabContent">
+                        <!-- Login Form -->
+                        <div class="tab-pane fade show active" id="login-pane" role="tabpanel">
+                            <form onsubmit="handleLoginSubmit(event)">
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted fw-bold">Email Address</label>
+                                    <input type="email" id="loginEmail" class="form-control" placeholder="user@store.com" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted fw-bold">Password</label>
+                                    <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold">Sign In</button>
+                            </form>
+                        </div>
+
+                        <!-- Register Form -->
+                        <div class="tab-pane fade" id="register-pane" role="tabpanel">
+                            <form onsubmit="handleRegisterSubmit(event)">
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted fw-bold">Full Name</label>
+                                    <input type="text" id="regName" class="form-control" placeholder="Jane Doe" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted fw-bold">Email Address</label>
+                                    <input type="email" id="regEmail" class="form-control" placeholder="jane@example.com" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted fw-bold">Password</label>
+                                    <input type="password" id="regPassword" class="form-control" placeholder="••••••••" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small text-muted fw-bold">Account Type</label>
+                                    <select id="regRole" class="form-select">
+                                        <option value="customer">Customer (Shop & Track)</option>
+                                        <option value="admin">Admin (Manage Products & Orders)</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold">Create Account</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN PRODUCT EDIT/ADD MODAL -->
+    <div class="modal fade" id="productFormModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold" id="productFormTitle">Add New Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="productForm" onsubmit="handleProductFormSubmit(event)">
+                        <input type="hidden" id="pfId">
+                        <div class="mb-3">
+                            <label class="form-label small text-muted fw-bold">Product Name</label>
+                            <input type="text" id="pfName" class="form-control" placeholder="e.g. Wireless Headphones" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted fw-bold">Category</label>
+                            <select id="pfCategory" class="form-select" required>
+                                <!-- Filled dynamically -->
+                            </select>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small text-muted fw-bold">Price ($)</label>
+                                <input type="number" step="0.01" id="pfPrice" class="form-control" placeholder="99.99" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted fw-bold">Stock Quantity</label>
+                                <input type="number" id="pfStock" class="form-control" placeholder="50" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted fw-bold">Image URL</label>
+                            <input type="url" id="pfImage" class="form-control" placeholder="https://images.unsplash.com/...">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted fw-bold">Description</label>
+                            <textarea id="pfDescription" class="form-control" rows="3" placeholder="Product features and specifications..." required></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold">Save Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEMO LOGINS QUICK MODAL -->
+    <div class="modal fade" id="demoLoginsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-key-fill text-warning me-2"></i> Quick Demo Logins</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small">Click any button below to instantly test role-based access:</p>
+                    <div class="d-grid gap-3">
+                        <div class="p-3 border rounded-3 bg-body-tertiary">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-bold"><i class="bi bi-person-fill text-primary me-1"></i> Standard Customer</div>
+                                    <div class="small text-muted">user@store.com / user123</div>
+                                </div>
+                                <button class="btn btn-outline-primary btn-sm rounded-pill fw-bold" onclick="quickLogin('user@store.com', 'user123')">Login as User</button>
+                            </div>
+                        </div>
+                        <div class="p-3 border rounded-3 bg-body-tertiary">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-bold"><i class="bi bi-shield-lock-fill text-danger me-1"></i> Store Admin</div>
+                                    <div class="small text-muted">admin@store.com / admin123</div>
+                                </div>
+                                <button class="btn btn-outline-danger btn-sm rounded-pill fw-bold" onclick="quickLogin('admin@store.com', 'admin123')">Login as Admin</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- App Scripts -->
+    <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

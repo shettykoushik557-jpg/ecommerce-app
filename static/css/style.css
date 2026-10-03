@@ -1,0 +1,212 @@
+/* Global Styles & Variables */
+:root {
+    --font-family-base: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    --card-hover-shadow: 0 20px 30px -10px rgba(79, 70, 229, 0.15);
+}
+
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Gradient Text */
+.text-gradient {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Hero Banner */
+.hero-banner {
+    background: linear-gradient(135deg, #312e81 0%, #4338ca 50%, #6366f1 100%);
+}
+
+.hero-glow {
+    top: -50%;
+    right: -20%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.text-white-80 {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* Search input */
+.max-w-500 {
+    max-width: 500px;
+}
+
+.search-input-group .form-control {
+    box-shadow: none;
+}
+
+.search-input-group .form-control:focus {
+    border-color: #4f46e5;
+}
+
+/* Category Chips */
+.btn-category {
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
+    border: 1px solid var(--bs-border-color);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.btn-category:hover, .btn-category.active {
+    background: var(--primary-gradient);
+    color: #ffffff !important;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+
+/* Product Cards */
+.product-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border: 1px solid var(--bs-border-color);
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--card-hover-shadow);
+}
+
+.product-img-wrapper {
+    position: relative;
+    padding-top: 75%; /* 4:3 Aspect Ratio */
+    background-color: #f8fafc;
+    overflow: hidden;
+}
+
+.product-img-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-img-wrapper img {
+    transform: scale(1.06);
+}
+
+.badge-stock-low {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+}
+
+/* Circle Icons */
+.icon-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Tracking Step Timeline */
+.tracking-timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.tracking-timeline::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 5px;
+    bottom: 5px;
+    width: 3px;
+    background-color: var(--bs-border-color);
+}
+
+.tracking-step {
+    position: relative;
+    padding-bottom: 1.5rem;
+}
+
+.tracking-step:last-child {
+    padding-bottom: 0;
+}
+
+.tracking-step-dot {
+    position: absolute;
+    left: -2rem;
+    top: 2px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: var(--bs-tertiary-bg);
+    border: 3px solid var(--bs-border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.tracking-step.completed .tracking-step-dot {
+    background-color: #10b981;
+    border-color: #10b981;
+    color: white;
+}
+
+.tracking-step.active .tracking-step-dot {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+    color: white;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
+}
+
+/* Custom Radio Card */
+.custom-radio-card {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.custom-radio-card:hover {
+    border-color: #4f46e5 !important;
+    background-color: var(--bs-tertiary-bg);
+}
+
+.form-check-input:checked + .form-check-label {
+    color: #4f46e5;
+}
+
+/* Quantity Controls */
+.qty-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Modal Enhancements */
+.border-end-md {
+    border-right: 1px solid var(--bs-border-color);
+}
+
+@media (max-width: 767.98px) {
+    .border-end-md {
+        border-right: none;
+        border-bottom: 1px solid var(--bs-border-color);
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+}
